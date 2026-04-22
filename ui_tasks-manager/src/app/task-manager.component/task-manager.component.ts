@@ -22,6 +22,9 @@ export class TaskManagerComponent implements OnInit {
   newTaskTitle: string = '';
   newTaskDescription: string = '';
   isDarkMode: boolean = false;
+  editingTaskId: number | null = null;
+  editTaskTitle: string = '';
+  editTaskDescription: string = '';
 
   ngOnInit(): void {
     const savedTheme = localStorage.getItem('theme');
@@ -55,6 +58,32 @@ export class TaskManagerComponent implements OnInit {
     const task = this.tasks.find(t => t.id === taskId);
     if (task) {
       task.status = task.status === 'Pendente' ? 'Concluída' : 'Pendente';
+    }
+  }
+
+  startEditing(task: Task): void {
+    this.editingTaskId = task.id;
+    this.editTaskTitle = task.title;
+    this.editTaskDescription = task.description;
+  }
+
+  cancelEdit(): void {
+    this.editingTaskId = null;
+    this.editTaskTitle = '';
+    this.editTaskDescription = '';
+  }
+
+  saveEdit(): void {
+    // Só salva se houver um ID selecionado e o título não estiver vazio
+    if (this.editingTaskId && this.editTaskTitle.trim()) {
+      const index = this.tasks.findIndex(t => t.id === this.editingTaskId);
+
+      if (index !== -1) {
+        this.tasks[index].title = this.editTaskTitle.trim();
+        this.tasks[index].description = this.editTaskDescription.trim();
+      }
+
+      this.cancelEdit();
     }
   }
 

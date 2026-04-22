@@ -1,0 +1,86 @@
+<div class="container">
+  <header class="header">
+    <h1>Minhas Tarefas</h1>
+    <button class="theme-toggle" (click)="toggleTheme()">
+      {{ isDarkMode ? '☀️ Modo Claro' : '🌙 Modo Escuro' }}
+    </button>
+  </header>
+
+  <main class="card">
+    <div class="input-area">
+      <div class="inputs">
+        <input
+          type="text"
+          [(ngModel)]="newTaskTitle"
+          placeholder="Qual é a tarefa?"
+        >
+        <textarea
+          [(ngModel)]="newTaskDescription"
+          placeholder="Adicione uma descrição (opcional)..."
+          rows="2"
+        ></textarea>
+      </div>
+      <button class="btn-add" (click)="addTask()" [disabled]="!newTaskTitle.trim()">Adicionar</button>
+    </div>
+
+    <ul class="task-list">
+      <li *ngFor="let task of tasks" [class.completed]="task.status === 'Concluída'" class="task-item">
+
+        <ng-container *ngIf="editingTaskId !== task.id">
+          <div class="task-content">
+            <input
+              type="checkbox"
+              [checked]="task.status == 'Concluída'"
+              (change)="toggleTaskStatus(task.id)"
+            >
+
+            <div class="task-details">
+              <span class="task-title">{{ task.title }}</span>
+              <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
+
+              <div class="task-meta">
+                <span class="badge" [class.badge-done]="task.status === 'Concluída'">
+                  {{ task.status }}
+                </span>
+                <span class="date">Criado em: {{ task.dataCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="task-actions">
+            <button class="btn-edit" (click)="startEditing(task)">Editar</button>
+            <button class="btn-delete" (click)="deleteTask(task.id)">Excluir</button>
+          </div>
+          </ng-container>
+
+          <ng-container *ngIf="editingTaskId === task.id">
+            <div class="task-edit-mode">
+            <input
+              type="text"
+              [(ngModel)]="editTaskTitle"
+              placeholder="Título da tarefa (obrigatório)"
+              (keyup.enter)="saveEdit()"
+            >
+            <textarea
+              [(ngModel)]="editTaskDescription"
+              placeholder="Nova descrição (opcional)..."
+              rows="2"
+            ></textarea>
+
+            <div class="edit-actions">
+              <button class="btn-save" (click)="saveEdit()" [disabled]="!editTaskTitle.trim()">Salvar</button>
+              <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+            </div>
+          </div>
+        </ng-container>
+        </li>
+    </ul>
+
+    <div class="empty-state" *ngIf="tasks.length === 0">
+      <p>Nenhuma tarefa no momento. Aproveite seu dia!</p>
+    </div>
+  </main>
+  <footer>
+    &copy;
+  </footer>
+</div>

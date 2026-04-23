@@ -16,7 +16,7 @@ export interface Task {
 })
 export class TaskService {
   // Ajuste a porta 5000/5001 conforme o seu console do .NET ao rodar a API
-  private apiUrl = 'http://localhost:5000/api/tasks';
+  private apiUrl = 'http://localhost:5012/api/tasks';
 
   constructor(private http: HttpClient) { }
 

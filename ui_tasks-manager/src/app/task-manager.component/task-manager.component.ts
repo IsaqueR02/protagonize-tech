@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TaskService, Task } from '../services/task.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-task-manager',
@@ -14,13 +15,17 @@ export class TaskManagerComponent implements OnInit {
   tasks: Task[] = [];
   newTaskTitle: string = '';
   newTaskDescription: string = '';
+
   isDarkMode: boolean = false;
 
   editingTaskId: number | null | undefined = null;
   editTaskTitle: string = '';
   editTaskDescription: string = '';
 
-  constructor(private taskService: TaskService) {}
+  constructor(
+    private taskService: TaskService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loadTasks();
@@ -34,7 +39,10 @@ export class TaskManagerComponent implements OnInit {
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
       next: (data) => this.tasks = data,
-      error: (err) => console.error('Erro ao carregar tarefas', err)
+      error: (err) => {
+        console.error(err);
+        this.toastr.error('Não foi possível conectar ao servidor.');
+      }
     });
   }
 
@@ -54,11 +62,17 @@ export class TaskManagerComponent implements OnInit {
       };
       this.taskService.createTask(newTask).subscribe({
         next: (createdTask) => {
-          this.tasks.push(createdTask); // Adiciona na tela com o ID real do banco
-          this.newTaskTitle = '';
-          this.newTaskDescription = '';
+          this.tasks.push(createdTask);
+          setTimeout(() => {
+            this.newTaskTitle = '';
+            this.newTaskDescription = '';
+          })
+          this.toastr.success('Tarefa adicionada com sucesso!');
         },
-        error: (err) => console.error('Erro ao criar tarefa', err)
+        error: (err) => {
+          console.error(err);
+          this.toastr.error('Falha ao salvar a tarefa. Tente novamente.');
+        }
       });
     }
   }
@@ -87,16 +101,31 @@ export class TaskManagerComponent implements OnInit {
   }
 
   saveEdit(): void {
-    // Só salva se houver um ID selecionado e o título não estiver vazio
     if (this.editingTaskId && this.editTaskTitle.trim()) {
-      const index = this.tasks.findIndex(t => t.id === this.editingTaskId);
+      const taskToUpdate = this.tasks.find(t => t.id === this.editingTaskId);
 
-      if (index !== -1) {
-        this.tasks[index].title = this.editTaskTitle.trim();
-        this.tasks[index].description = this.editTaskDescription.trim();
+      if (taskToUpdate) {
+        const updatedTask = {
+          ...taskToUpdate,
+          title: this.editTaskTitle.trim(),
+          description: this.editTaskDescription.trim()
+        };
+
+        this.taskService.updateTask(this.editingTaskId, updatedTask).subscribe({
+          next: () => {
+            taskToUpdate.title = updatedTask.title;
+            taskToUpdate.description = updatedTask.description;
+            setTimeout(() => {
+              this.cancelEdit();
+            });
+            this.toastr.success('Tarefa atualizada com sucesso!');
+          },
+          error: (err) => {
+          console.error(err);
+          this.toastr.error('Falha ao editar a tarefa. Tente novamente.');
+        }
+        });
       }
-
-      this.cancelEdit();
     }
   }
 
@@ -107,7 +136,10 @@ export class TaskManagerComponent implements OnInit {
       next: () => {
         this.tasks = this.tasks.filter(t => t.id !== taskId);
       },
-      error: (err) => console.error('Erro ao deletar', err)
+      error: (err) => {
+          console.error(err);
+          this.toastr.error('Falha ao deletar a tarefa. Tente novamente.', 'Ops!');
+        }
     });
   }
 }

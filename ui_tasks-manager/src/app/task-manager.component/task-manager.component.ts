@@ -1,14 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  status: 'Pendente' | 'Concluída';
-  dataCreation: Date;
-}
+import { TaskService, Task } from '../services/task.service';
 
 @Component({
   selector: 'app-task-manager',
@@ -22,15 +15,27 @@ export class TaskManagerComponent implements OnInit {
   newTaskTitle: string = '';
   newTaskDescription: string = '';
   isDarkMode: boolean = false;
-  editingTaskId: number | null = null;
+
+  editingTaskId: number | null | undefined = null;
   editTaskTitle: string = '';
   editTaskDescription: string = '';
 
+  constructor(private taskService: TaskService) {}
+
   ngOnInit(): void {
+    this.loadTasks();
+
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.toggleTheme(true);
     }
+  }
+
+  loadTasks(): void {
+    this.taskService.getTasks().subscribe({
+      next: (data) => this.tasks = data,
+      error: (err) => console.error('Erro ao carregar tarefas', err)
+    });
   }
 
   toggleTheme(forceDark?: boolean): void {
@@ -42,29 +47,37 @@ export class TaskManagerComponent implements OnInit {
 
   addTask(): void {
     if (this.newTaskTitle.trim()) {
-      this.tasks.push({
-        id: Date.now(),
+      const newTask: Task = {
         title: this.newTaskTitle.trim(),
         description: this.newTaskDescription.trim(),
-        status: 'Pendente',
-        dataCreation: new Date()
+        isCompleted: false
+      };
+      this.taskService.createTask(newTask).subscribe({
+        next: (createdTask) => {
+          this.tasks.push(createdTask); // Adiciona na tela com o ID real do banco
+          this.newTaskTitle = '';
+          this.newTaskDescription = '';
+        },
+        error: (err) => console.error('Erro ao criar tarefa', err)
       });
-      this.newTaskTitle = '';
-      this.newTaskDescription = '';
     }
   }
 
-  toggleTaskStatus(taskId: number): void {
-    const task = this.tasks.find(t => t.id === taskId);
-    if (task) {
-      task.status = task.status === 'Pendente' ? 'Concluída' : 'Pendente';
-    }
+  toggleTaskStatus(task: Task): void {
+    const updatedTask = { ...task, isCompleted: !task.isCompleted };
+
+    this.taskService.updateTask(task.id!, updatedTask).subscribe({
+      next: () => {
+        task.isCompleted = !task.isCompleted;
+      },
+      error: (err) => console.error('Erro ao atualizar status', err)
+    });
   }
 
   startEditing(task: Task): void {
     this.editingTaskId = task.id;
     this.editTaskTitle = task.title;
-    this.editTaskDescription = task.description;
+    this.editTaskDescription = task.description || '';
   }
 
   cancelEdit(): void {
@@ -87,7 +100,14 @@ export class TaskManagerComponent implements OnInit {
     }
   }
 
-  deleteTask(taskId: number): void {
-    this.tasks = this.tasks.filter(t => t.id !== taskId);
+  deleteTask(taskId: number | undefined): void {
+    if (!taskId) return;
+
+    this.taskService.deleteTask(taskId).subscribe({
+      next: () => {
+        this.tasks = this.tasks.filter(t => t.id !== taskId);
+      },
+      error: (err) => console.error('Erro ao deletar', err)
+    });
   }
 }

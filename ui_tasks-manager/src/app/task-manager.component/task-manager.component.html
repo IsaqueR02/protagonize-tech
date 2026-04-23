@@ -31,7 +31,7 @@
             <input
               type="checkbox"
               [checked]="task.status == 'Concluída'"
-              (change)="toggleTaskStatus(task.id)"
+              (change)="toggleTaskStatus(task)"
             >
 
             <div class="task-details">
@@ -42,7 +42,7 @@
                 <span class="badge" [class.badge-done]="task.status === 'Concluída'">
                   {{ task.status }}
                 </span>
-                <span class="date">Criado em: {{ task.dataCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="date">Criado em: {{ task.createdAt| date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
             </div>
           </div>

@@ -7,7 +7,7 @@ export interface Task {
   id?: number; // Opcional pois a API gera na criação
   title: string;
   description?: string;
-  isCompleted: boolean;
+  status: 'Pendente' | 'Concluída';
   createdAt?: Date;
 }
 

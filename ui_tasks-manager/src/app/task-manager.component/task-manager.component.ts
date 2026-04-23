@@ -58,7 +58,7 @@ export class TaskManagerComponent implements OnInit {
       const newTask: Task = {
         title: this.newTaskTitle.trim(),
         description: this.newTaskDescription.trim(),
-        isCompleted: false
+        status: 'Pendente'
       };
       this.taskService.createTask(newTask).subscribe({
         next: (createdTask) => {
@@ -78,13 +78,18 @@ export class TaskManagerComponent implements OnInit {
   }
 
   toggleTaskStatus(task: Task): void {
-    const updatedTask = { ...task, isCompleted: !task.isCompleted };
+
+    const novoStatus: "Pendente" | "Concluída" = task.status === 'Pendente' ? 'Concluída' : 'Pendente';
+    const updatedTask = { ...task, status: novoStatus };
 
     this.taskService.updateTask(task.id!, updatedTask).subscribe({
-      next: () => {
-        task.isCompleted = !task.isCompleted;
-      },
-      error: (err) => console.error('Erro ao atualizar status', err)
+        next: () => {
+          task.status = novoStatus; // Atualiza a tela
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastr.error('Erro ao atualizar status');
+        }
     });
   }
 

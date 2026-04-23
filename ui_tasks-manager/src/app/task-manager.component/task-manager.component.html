@@ -19,18 +19,18 @@
           placeholder="Adicione uma descrição (opcional)..."
           rows="2"
         ></textarea>
-      <button class="btn-add" (click)="addTask()" [disabled]="!newTaskTitle.trim()">Adicionar</button>
       </div>
+      <button class="btn-add" (click)="addTask()" [disabled]="!newTaskTitle.trim()">Adicionar</button>
     </div>
 
     <ul class="task-list">
-      <li *ngFor="let task of tasks" [class.completed]="task.isCompleted" class="task-item">
+      <li *ngFor="let task of tasks" [class.completed]="task.status === 'Concluída'" class="task-item">
 
         <ng-container *ngIf="editingTaskId !== task.id">
           <div class="task-content">
             <input
               type="checkbox"
-              [checked]="task.isCompleted"
+              [checked]="task.status == 'Concluída'"
               (change)="toggleTaskStatus(task)"
             >
 
@@ -39,10 +39,10 @@
               <p class="task-description" *ngIf="task.description">{{ task.description }}</p>
 
               <div class="task-meta">
-                <span class="badge" [class.badge-done]="task.isCompleted">
-                  {{ task }}
+                <span class="badge" [class.badge-done]="task.status === 'Concluída'">
+                  {{ task.status }}
                 </span>
-                <span class="date">Criado em: {{ task.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span class="date">Criado em: {{ task.createdAt| date:'dd/MM/yyyy HH:mm' }}</span>
               </div>
             </div>
           </div>

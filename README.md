@@ -56,7 +56,12 @@ Siga os passos abaixo na ordem apresentada.
    dotnet restore
 3. Crie o banco de dados e as tabelas usando as Migrations do Entity Framework:
     ```bash
-   dotnet ef database update
+   dotnet ef migrations add InitialCreate
+
+   &
+   
+   dotnet efdatabase update
+
 
 4. Inicie a API:
    ```bash

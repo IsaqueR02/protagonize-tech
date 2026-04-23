@@ -44,7 +44,7 @@ public class TasksController : ControllerBase
 
         task.Title = updated.Title;
         task.Description = updated.Description;
-        task.IsCompleted = updated.IsCompleted;
+        task.Status = updated.Status;
 
         await _context.SaveChangesAsync();
         return NoContent();

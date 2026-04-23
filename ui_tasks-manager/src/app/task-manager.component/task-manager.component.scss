@@ -1,0 +1,361 @@
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+}
+
+.theme-toggle {
+  background: var(--accent-lilac);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: background 0.3s;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  transition: background 0.3s, border 0.3s;
+}
+
+.input-area {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+
+  .inputs {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+      resize: vertical; /* Permite redimensionar o textarea apenas para baixo */
+
+      &:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+      }
+    }
+  }
+
+  .btn-add {
+    background: var(--accent-blue);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s;
+    height: fit-content;
+
+    &:hover:not(:disabled) {
+      filter: brightness(0.9);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .task-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    flex: 1;
+
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 4px;
+      accent-color: var(--accent-blue);
+      cursor: pointer;
+    }
+  }
+
+  .task-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    .task-title {
+      font-weight: 500;
+      font-size: 1.1rem;
+      transition: color 0.3s;
+    }
+
+    .task-description {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+
+      .badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        background: var(--accent-lilac);
+        color: var(--text-primary);
+        font-weight: 500;
+
+        &.badge-done {
+          background: var(--success-color);
+          color: white;
+        }
+      }
+
+      .date {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        opacity: 0.8;
+      }
+    }
+  }
+
+  .task-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 4px;
+
+    button {
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.2s, transform 0.1s;
+
+      &:hover {
+        opacity: 1;
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-edit {
+      background: var(--accent-lilac);
+      color: var(--text-primary);
+    }
+
+    .btn-delete {
+      background: var(--danger-color);
+      color: white;
+    }
+  }
+
+  .task-edit-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.5rem 0;
+
+    input, textarea {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--accent-blue);
+      border-radius: 6px;
+      background: var(--bg-color);
+      color: var(--text-primary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      transition: border-color 0.3s;
+      resize: vertical;
+
+      &:focus {
+        outline: none;
+        border-width: 2px;
+      }
+    }
+
+    .edit-actions {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+
+      button {
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: filter 0.2s;
+
+        &:hover:not(:disabled) {
+          filter: brightness(0.9);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .btn-save {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  /* Efeito visual de quando a tarefa é concluída */
+  &.completed {
+    .task-title {
+      text-decoration: line-through;
+      color: var(--text-secondary);
+    }
+    .task-description {
+      opacity: 0.6;
+    }
+  }
+
+  .btn-delete {
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    opacity: 0.8;
+    margin-top: 4px;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem 0;
+  font-style: italic;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 600px) {
+  .input-area {
+    flex-direction: column;
+
+    .btn-add {
+      width: 100%;
+    }
+  }
+
+  .task-meta {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+  }
+  .edit-actions {
+      display: flex;
+      gap: 0.8rem;
+      justify-content: flex-end;
+
+      button {
+        border: none;
+        padding: 0.5rem 1.2rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: filter 0.2s;
+
+        &:hover:not(:disabled) {
+          filter: brightness(0.9);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .btn-save {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+      }
+    }
+}

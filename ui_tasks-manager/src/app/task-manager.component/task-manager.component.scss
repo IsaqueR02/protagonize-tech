@@ -307,6 +307,21 @@
   font-style: italic;
 }
 
+.app-footer {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  margin-top: 3rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+  font-family: 'Poppins', sans-serif;
+
+  strong {
+    color: var(--accent-blue);
+    font-weight: 600;
+  }
+}
+
 /* Responsividade para telas menores */
 @media (max-width: 600px) {
   .input-area {

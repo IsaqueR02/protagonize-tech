@@ -32,7 +32,7 @@ A aplicação gerencia a entidade **Tarefa** com os seguintes campos: `Id` (Auto
 - [x] **Comunicação Integrada:** Front-end consumindo a API via `HttpClient` com configuração de CORS ativa.
 - [x] **Edição Inline:** Atualização de tarefas na própria lista, sem redirecionamentos de página.
 - [x] **Design Responsivo & Dark Mode:** Interface moderna adaptável a dispositivos móveis com suporte a temas.
-- [x] **Tratamento de Erros (Diferencial):** Validação de formulários e uso de Toasts para feedback das operações HTTP.
+- [x] **Tratamento de Erros (Diferencial):** Validação de formulários e uso de **SnackBar** para feedback das operações HTTP.
 
 ---
 

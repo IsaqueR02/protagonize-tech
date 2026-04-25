@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TaskService, Task } from '../services/task.service';
-import { ToastrService } from 'ngx-toastr';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-task-manager',
@@ -24,8 +25,18 @@ export class TaskManagerComponent implements OnInit {
 
   constructor(
     private taskService: TaskService,
-    private toastr: ToastrService
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {}
+
+  private showNotification(message: string, type: 'success' | 'warning' | 'error'): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: 3000,
+      verticalPosition: 'top',
+      horizontalPosition: 'center',
+      panelClass: [`snackbar-${type}`]
+    });
+  }
 
   ngOnInit(): void {
     this.loadTasks();
@@ -41,7 +52,7 @@ export class TaskManagerComponent implements OnInit {
       next: (data) => this.tasks = data,
       error: (err) => {
         console.error(err);
-        this.toastr.error('Não foi possível conectar ao servidor.');
+        this.showNotification('Erro na conexão com a API.', 'error');
       }
     });
   }
@@ -62,16 +73,17 @@ export class TaskManagerComponent implements OnInit {
       };
       this.taskService.createTask(newTask).subscribe({
         next: (createdTask) => {
-          this.tasks.push(createdTask);
-          setTimeout(() => {
-            this.newTaskTitle = '';
-            this.newTaskDescription = '';
-          })
-          this.toastr.success('Tarefa adicionada com sucesso!');
+          this.tasks.push(...this.tasks, createdTask);
+
+          this.newTaskTitle = '';
+          this.newTaskDescription = '';
+
+          this.showNotification('Tarefa adicionada com sucesso!', 'success');
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error('Falha ao salvar a tarefa. Tente novamente.');
+          this.showNotification('Falha ao adicionar a tarefa.', 'warning');
         }
       });
     }
@@ -84,11 +96,12 @@ export class TaskManagerComponent implements OnInit {
 
     this.taskService.updateTask(task.id!, updatedTask).subscribe({
         next: () => {
-          task.status = novoStatus; // Atualiza a tela
+          this.tasks = this.tasks.map(t => t.id === task.id ? { ...t, status: novoStatus } : t);
+          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error(err);
-          this.toastr.error('Erro ao atualizar status');
+          this.showNotification('Falha ao atualizar o status.', 'warning');
         }
     });
   }
@@ -118,16 +131,19 @@ export class TaskManagerComponent implements OnInit {
 
         this.taskService.updateTask(this.editingTaskId, updatedTask).subscribe({
           next: () => {
-            taskToUpdate.title = updatedTask.title;
-            taskToUpdate.description = updatedTask.description;
-            setTimeout(() => {
-              this.cancelEdit();
-            });
-            this.toastr.success('Tarefa atualizada com sucesso!');
+            this.tasks = this.tasks.map(t =>
+              t.id === this.editingTaskId
+                ? { ...t, title: updatedTask.title, description: updatedTask.description }
+                : t
+            );
+
+            this.cancelEdit();
+            this.showNotification('Tarefa atualizada com sucesso!', 'success');
+            this.cdr.detectChanges();
           },
           error: (err) => {
           console.error(err);
-          this.toastr.error('Falha ao editar a tarefa. Tente novamente.');
+          this.showNotification('Falha ao editar a tarefa.', 'warning');
         }
         });
       }
@@ -140,11 +156,13 @@ export class TaskManagerComponent implements OnInit {
     this.taskService.deleteTask(taskId).subscribe({
       next: () => {
         this.tasks = this.tasks.filter(t => t.id !== taskId);
+        this.showNotification('Tarefa removida.', 'success');
+        this.cdr.detectChanges();
       },
       error: (err) => {
-          console.error(err);
-          this.toastr.error('Falha ao deletar a tarefa. Tente novamente.', 'Ops!');
-        }
+        console.error(err);
+        this.showNotification('Erro ao comunicar com a API.', 'error');
+      }
     });
   }
 }
